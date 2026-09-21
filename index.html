@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halloween Spooktacular Spins - Neon Classroom Candy Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Creepster&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --neon-green: #39ff14;
+            --neon-purple: #b026ff;
+            --neon-orange: #ff6600;
+            --neon-pink: #ff007f;
+            --neon-cyan: #00f3ff;
+            --bg-dark: #0f051d;
+        }
+
+        body {
+            font-family: 'Fredoka', cursive, sans-serif;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            overflow-x: hidden;
+            user-select: none;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(176, 38, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(57, 255, 20, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(255, 102, 0, 0.08) 0%, transparent 60%);
+        }
+
+        /* Ambient neon shapes on classroom wall */
+        .neon-wall-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.25;
+        }
+
+        .neon-sign-title {
+            font-family: 'Creepster', cursive;
+            text-shadow: 
+                0 0 5px #fff,
+                0 0 10px #fff,
+                0 0 20px var(--neon-purple),
+                0 0 30px var(--neon-purple),
+                0 0 40px var(--neon-purple);
+            animation: neonPulse 2s infinite alternate;
+        }
+
+        .neon-sign-green {
+            text-shadow: 
+                0 0 5px #fff,
+                0 0 10px var(--neon-green),
+                0 0 20px var(--neon-green),
+                0 0 35px var(--neon-green);
+        }
+
+        .neon-border-green {
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.5), inset 0 0 15px rgba(57, 255, 20, 0.3);
+            border: 2px solid var(--neon-green);
+        }
+
+        .neon-border-purple {
+            box-shadow: 0 0 15px rgba(176, 38, 255, 0.5), inset 0 0 15px rgba(176, 38, 255, 0.3);
+            border: 2px solid var(--neon-purple);
+        }
+
+        .neon-border-orange {
+            box-shadow: 0 0 15px rgba(255, 102, 0, 0.5), inset 0 0 15px rgba(255, 102, 0, 0.3);
+            border: 2px solid var(--neon-orange);
+        }
+
+        @keyframes neonPulse {
+            0% { opacity: 0.9; text-shadow: 0 0 5px #fff, 0 0 15px var(--neon-purple), 0 0 25px var(--neon-purple); }
+            100% { opacity: 1; text-shadow: 0 0 8px #fff, 0 0 25px var(--neon-purple), 0 0 45px var(--neon-purple); }
+        }
+
+        /* Floating Candy Effect */
+        .floating-candy {
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(8deg); }
+        }
+
+        .fog-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background: linear-gradient(180deg, transparent 70%, rgba(15, 5, 29, 0.8) 100%);
+        }
+
+        .fog-cloud {
+            position: absolute;
+            background: radial-gradient(ellipse at center, rgba(176, 38, 255, 0.08) 0%, transparent 70%);
+            width: 600px;
+            height: 300px;
+            border-radius: 50%;
+            filter: blur(50px);
+            animation: fogMove 25s linear infinite alternate;
+        }
+
+        @keyframes fogMove {
+            0% { transform: translate(-100px, -50px); }
+            100% { transform: translate(200px, 100px); }
+        }
+
+        .wheel-shadow {
+            filter: drop-shadow(0px 0px 25px rgba(57, 255, 20, 0.4));
+        }
+
+        .glass-panel {
+            background: rgba(26, 11, 46, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 5, 29, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-purple);
+            border-radius: 4px;
+        }
+
+        .spin-btn-pulse {
+            animation: btnGlow 1.5s infinite alternate;
+        }
+        @keyframes btnGlow {
+            0% { box-shadow: 0 0 15px var(--neon-orange), 0 0 30px var(--neon-orange); transform: scale(1); }
+            100% { box-shadow: 0 0 25px var(--neon-orange), 0 0 50px var(--neon-orange); transform: scale(1.03); }
+        }
+
+        #candyRainCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .clip-triangle {
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            80% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-bounce-in {
+            animation: bounceIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative selection:bg-purple-500 selection:text-white">
+
+    <div class="fog-container">
+        <div class="fog-cloud" style="top: 10%; left: 15%;"></div>
+        <div class="fog-cloud" style="top: 60%; right: 10%; animation-delay: -10s;"></div>
+    </div>
+
+    <!-- Classroom Ambient Neon Background Deco -->
+    <svg class="neon-wall-bg" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 100 150 Q 130 120 160 150 Q 180 130 200 150 Q 180 170 150 160 Q 120 170 100 150 Z" fill="none" stroke="#b026ff" stroke-width="3" filter="drop-shadow(0 0 8px #b026ff)"/>
+        <path d="M 85% 120 A 40 40 0 1 0 85% 180 A 30 30 0 1 1 85% 120 Z" fill="none" stroke="#39ff14" stroke-width="3" filter="drop-shadow(0 0 10px #39ff14)"/>
+        <path d="M 0 0 L 120 0 M 0 0 L 0 120 M 0 0 L 90 90 M 40 0 Q 40 40 0 40 M 80 0 Q 80 80 0 80 M 120 0 Q 120 120 0 120" fill="none" stroke="#ff007f" stroke-width="2" opacity="0.6"/>
+        <polygon points="250,80 256,95 272,96 260,107 264,122 250,113 236,122 240,107 228,96 244,95" fill="none" stroke="#00f3ff" stroke-width="2" filter="drop-shadow(0 0 6px #00f3ff)"/>
+    </svg>
+
+    <!-- Overlay Mini Game Canvas for Candy Blitz -->
+    <canvas id="candyRainCanvas"></canvas>
+
+    <header class="relative z-10 px-4 py-3 border-b border-purple-900/50 bg-purple-950/40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            
+            <!-- Logo & Classroom Party Header -->
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-lime-400 p-0.5 shadow-lg shadow-purple-500/30">
+                    <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-2xl">
+                        🎃
+                    </div>
+                </div>
+                <div>
+                    <h1 class="neon-sign-title text-2xl sm:text-3xl font-extrabold tracking-wider text-purple-200">
+                        HALLOWEEN SPOOKTACULAR
+                    </h1>
+                    <p class="text-xs text-lime-400 font-semibold tracking-widest uppercase flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-lime-400 animate-ping"></span>
+                        Classroom Candy Party Edition
+                    </p>
+                </div>
+            </div>
+
+            <!-- Top Stats & Audio Controls -->
+            <div class="flex items-center gap-3 sm:gap-6 ml-auto">
+                <div class="flex items-center gap-2 bg-purple-900/60 border border-purple-500/30 px-4 py-1.5 rounded-full shadow-inner">
+                    <span class="text-2xl floating-candy">🍬</span>
+                    <div>
+                        <div class="text-[10px] uppercase tracking-wider text-purple-300 font-bold">Total Candy</div>
+                        <div id="totalCandyCount" class="text-xl font-extrabold text-amber-300 leading-none">0</div>
+                    </div>
+                </div>
+
+                <div class="hidden sm:flex items-center gap-2 bg-amber-950/50 border border-amber-500/30 px-3 py-1.5 rounded-full">
+                    <span class="text-xl">🔥</span>
+                    <div>
+                        <div class="text-[10px] uppercase tracking-wider text-amber-400 font-bold">Spooky Streak</div>
+                        <div id="streakDisplay" class="text-sm font-extrabold text-amber-200 leading-none">1.0x Multiplier</div>
+                    </div>
+                </div>
+
+                <button id="soundToggleBtn" class="w-10 h-10 rounded-full bg-purple-900/50 hover:bg-purple-800 border border-purple-400/40 flex items-center justify-center text-purple-200 transition-all hover:scale-105 active:scale-95" title="Toggle Sound SFX">
+                    <i class="fa-solid fa-volume-high text-lg"></i>
+                </button>
+
+                <button id="infoBtn" class="w-10 h-10 rounded-full bg-purple-900/50 hover:bg-purple-800 border border-purple-400/40 flex items-center justify-center text-purple-200 transition-all hover:scale-105 active:scale-95" title="Rules & How to Play">
+                    <i class="fa-solid fa-circle-question text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 max-w-7xl mx-auto px-4 py-4 w-full flex-1 flex flex-col justify-center">
+        
+        <!-- Main Party Goal Tracker -->
+        <div class="w-full max-w-4xl mx-auto mb-4 bg-purple-950/80 border-2 border-amber-400 rounded-2xl p-3 shadow-xl backdrop-blur-md flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="text-3xl animate-bounce">🏆</div>
+                <div>
+                    <div class="text-xs uppercase tracking-widest text-amber-400 font-black flex items-center gap-1">
+                        <span>MAIN PARTY GOAL</span> &bull; <span class="text-lime-300">Win the Ultimate Halloween Party!</span>
+                    </div>
+                    <div class="text-xs text-purple-200 font-medium">
+                        Fill the bucket with <span class="text-amber-300 font-bold">500 Candies</span> & Complete <span class="text-lime-400 font-bold">3 Challenges</span>!
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 flex-1 max-w-xs ml-auto">
+                <div class="w-full">
+                    <div class="flex justify-between text-[11px] font-bold text-purple-300 mb-1">
+                        <span>Party Progress</span>
+                        <span id="partyProgressText">0 / 500 Candies</span>
+                    </div>
+                    <div class="w-full bg-purple-900/80 rounded-full h-3 border border-purple-500/40 overflow-hidden p-0.5">
+                        <div id="partyProgressBar" class="bg-gradient-to-r from-amber-400 via-lime-400 to-emerald-400 h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div class="text-center min-w-[60px]">
+                    <div class="text-[10px] uppercase text-purple-300 font-bold">Quests</div>
+                    <div id="questCountDisplay" class="text-sm font-black text-lime-400">0 / 3</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            
+            <div class="lg:col-span-3 order-2 lg:order-1 flex flex-col gap-4">
+                
+                <div class="glass-panel rounded-3xl p-4 neon-border-purple relative overflow-hidden">
+                    <div class="flex items-center justify-between border-b border-purple-800/60 pb-2 mb-3">
+                        <h2 class="text-lg font-bold text-purple-200 flex items-center gap-2">
+                            <i class="fa-solid fa-basket-shopping text-lime-400"></i> Candy Bucket
+                        </h2>
+                        <span id="bucketFillPercent" class="text-xs bg-purple-900/80 px-2 py-0.5 rounded-full text-lime-300 font-mono font-bold">0% Full</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="bg-purple-950/60 p-2.5 rounded-2xl border border-purple-800/40 flex items-center gap-2.5">
+                            <span class="text-2xl">🍬</span>
+                            <div>
+                                <div class="text-purple-300 font-semibold">Wrapped Candy</div>
+                                <div id="wrappedCount" class="text-sm font-bold text-white">0</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-purple-950/60 p-2.5 rounded-2xl border border-purple-800/40 flex items-center gap-2.5">
+                            <span class="text-2xl">🌽</span>
+                            <div>
+                                <div class="text-purple-300 font-semibold">Candy Corn</div>
+                                <div id="candyCornCount" class="text-sm font-bold text-white">0</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-purple-950/60 p-2.5 rounded-2xl border border-purple-800/40 flex items-center gap-2.5">
+                            <span class="text-2xl">🍭</span>
+                            <div>
+                                <div class="text-purple-300 font-semibold">Lolli Pops</div>
+                                <div id="lollipopCount" class="text-sm font-bold text-white">0</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-purple-950/60 p-2.5 rounded-2xl border border-purple-800/40 flex items-center gap-2.5">
+                            <span class="text-2xl">🍫</span>
+                            <div>
+                                <div class="text-purple-300 font-semibold">Choco Bars</div>
+                                <div id="chocoCount" class="text-sm font-bold text-white">0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="triggerBlitzBtn" class="w-full mt-4 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-lime-500 to-emerald-600 hover:from-lime-400 hover:to-emerald-500 text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-lime-500/20 transition-all flex items-center justify-center gap-2 active:scale-95">
+                        <i class="fa-solid fa-bolt text-sm"></i> Play Candy Rain Blitz
+                    </button>
+                </div>
+
+                <div class="glass-panel rounded-3xl p-4 border border-purple-800/50">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-purple-300 mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Neon Wheel Theme
+                    </h3>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button class="theme-select-btn active p-2 rounded-xl border-2 border-lime-400 bg-lime-950/70 text-xs font-bold text-lime-300 text-center hover:bg-purple-900/50 transition-all shadow-md shadow-lime-500/20" data-theme="classic">
+                            🎃 Classic
+                        </button>
+                        <button class="theme-select-btn p-2 rounded-xl border border-purple-800 bg-purple-950/40 text-xs font-semibold text-purple-300 text-center hover:bg-purple-900/50 transition-all" data-theme="neonGhost">
+                            👻 Ghost
+                        </button>
+                        <button class="theme-select-btn p-2 rounded-xl border border-purple-800 bg-purple-950/40 text-xs font-semibold text-purple-300 text-center hover:bg-purple-900/50 transition-all" data-theme="witchGlow">
+                            🧪 Witch
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="lg:col-span-6 order-1 lg:order-2 flex flex-col items-center justify-center relative">
+                
+                <div class="mb-2 text-center relative z-10">
+                    <div class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-900/90 via-slate-950/90 to-purple-900/90 border-2 border-lime-400 px-6 py-1.5 rounded-full shadow-lg shadow-lime-500/20">
+                        <span class="text-xl animate-pulse">✨</span>
+                        <span id="currentStatusText" class="text-xs sm:text-sm font-extrabold uppercase tracking-widest text-lime-300">
+                            Ready to Spin for Treats!
+                        </span>
+                        <span class="text-xl animate-pulse">✨</span>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-center my-2 p-3">
+                    <div class="absolute -top-3 z-30 flex flex-col items-center filter drop-shadow(0 0 10px #ff007f)">
+                        <div class="w-8 h-10 bg-gradient-to-b from-pink-500 to-rose-600 clip-triangle shadow-lg"></div>
+                        <div class="w-4 h-4 bg-lime-300 rounded-full border-2 border-slate-900 -mt-2"></div>
+                    </div>
+
+                    <div class="absolute inset-0 rounded-full border-4 border-lime-400 opacity-80 blur-[2px] animate-pulse"></div>
+                    <div class="absolute inset-2 rounded-full border-2 border-purple-500 opacity-90 blur-[1px]"></div>
+
+                    <canvas id="wheelCanvas" width="480" height="480" class="max-w-full h-auto rounded-full cursor-pointer wheel-shadow transition-transform duration-300 hover:scale-[1.01]"></canvas>
+
+                    <button id="spinBtn" class="absolute z-20 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 border-4 border-lime-300 flex flex-col items-center justify-center shadow-2xl spin-btn-pulse transition-transform active:scale-90 group">
+                        <span class="text-xs font-black uppercase text-purple-950 tracking-tighter">TAP TO</span>
+                        <span class="text-xl sm:text-2xl font-black text-white drop-shadow-md group-hover:scale-110 transition-transform">SPIN!</span>
+                        <i class="fa-solid fa-rotate-right text-xs text-lime-200 mt-0.5 animate-spin" style="animation-duration: 6s;"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-4 mt-2">
+                    <button id="autoSpinBtn" class="px-4 py-2 rounded-full bg-purple-900/60 hover:bg-purple-800 border border-purple-500/40 text-xs font-bold text-purple-200 flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-wand-sparkles text-lime-400"></i> Auto-Spin: <span id="autoSpinState">OFF</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="lg:col-span-3 order-3 flex flex-col gap-4">
+                
+                <div class="glass-panel rounded-3xl p-4 neon-border-orange relative overflow-hidden flex flex-col items-center text-center">
+                    <div class="relative my-2">
+                        <div class="w-28 h-28 rounded-full bg-gradient-to-tr from-orange-600 via-purple-600 to-lime-400 p-1 shadow-lg shadow-orange-500/30">
+                            <div class="w-full h-full bg-purple-950 rounded-full flex items-center justify-center text-6xl relative overflow-hidden">
+                                <span id="hostEmoji" class="floating-candy transition-all duration-300">🎃</span>
+                            </div>
+                        </div>
+                        <span class="absolute -bottom-1 -right-1 bg-lime-400 text-purple-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase border border-slate-900">
+                            Party Host
+                        </span>
+                    </div>
+
+                    <h3 class="text-base font-extrabold text-amber-300">Jack the Pumpkin Host</h3>
+                    <div id="speechBubble" class="mt-2 w-full bg-purple-950/80 border border-purple-600/40 p-3 rounded-2xl text-xs text-purple-100 font-medium relative shadow-inner">
+                        "Welcome to our Spooktacular Classroom Party! Give the wheel a big spin to earn sweet treats!"
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-3xl p-4 border border-purple-800/50 flex-1 flex flex-col">
+                    <div class="flex items-center justify-between border-b border-purple-800/60 pb-2 mb-2">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-purple-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-bullhorn text-lime-400"></i> Party Log & Challenges
+                        </h3>
+                        <span class="text-[10px] text-purple-400">Classroom Live</span>
+                    </div>
+
+                    <div id="partyFeed" class="flex-1 overflow-y-auto space-y-2 max-h-48 pr-1 text-xs">
+                        <div class="bg-purple-950/40 p-2 rounded-xl border border-purple-800/30 text-purple-200">
+                            <span class="text-lime-400 font-bold">Party Started:</span> Spin the glowing wheel to win treats and unlock fun group prompts!
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <div id="challengeModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 neon-border-green text-center relative animate-bounce-in">
+            <button id="closeModalBtn" class="absolute top-4 right-4 text-purple-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div id="modalIcon" class="text-6xl my-2">👻</div>
+            <h2 id="modalTitle" class="text-2xl font-black text-amber-300">Classroom Challenge!</h2>
+            <p id="modalDescription" class="text-sm text-purple-100 my-3 leading-relaxed">
+                Do your best Monster Mash dance step for 5 seconds to claim 100 Bonus Candies!
+            </p>
+
+            <button id="claimRewardBtn" class="mt-4 w-full py-3 bg-gradient-to-r from-lime-400 to-emerald-500 text-slate-950 font-black rounded-2xl uppercase tracking-wider shadow-lg shadow-lime-500/30 hover:scale-105 transition-all active:scale-95">
+                Claim Treat Reward! 🎉
+            </button>
+        </div>
+    </div>
+
+    <div id="infoModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 border border-purple-500/50 text-purple-100 relative">
+            <button id="closeInfoBtn" class="absolute top-4 right-4 text-purple-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h2 class="text-xl font-bold text-amber-300 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-lime-400"></i> What's the Goal & How to Play
+            </h2>
+            
+            <div class="bg-purple-900/60 border border-amber-400/40 p-3 rounded-2xl mb-3 text-xs text-amber-200">
+                🎯 <strong>THE POINT OF THE GAME:</strong> You are hosting the Ultimate Classroom Halloween Party! Your goal is to collect <strong>500 Candies</strong> and complete <strong>3 Classroom Challenges</strong> to win the Golden Pumpkin Trophy and trigger the Victory Celebration!
+            </div>
+
+            <ul class="text-xs space-y-2.5 list-disc list-inside text-purple-200">
+                <li><strong class="text-lime-300">1. Spin the Wheel:</strong> Tap "SPIN!" to win wrapped candy, candy corn, lollipops, and chocolate bars.</li>
+                <li><strong class="text-amber-300">2. Complete Classroom Quests:</strong> Land on ghost/skeleton slots to perform fun 5-second group challenges (like monster dances or riddles).</li>
+                <li><strong class="text-pink-300">3. Candy Rain Blitz:</strong> Land on Bonus Jackpot to tap falling candies for huge bonus multipliers!</li>
+                <li><strong class="text-emerald-300">4. Fill the Bucket:</strong> Reach 100% capacity to host the ultimate party!</li>
+            </ul>
+            <button id="gotItBtn" class="mt-5 w-full py-2.5 bg-gradient-to-r from-lime-400 to-emerald-500 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider shadow-lg hover:scale-105 transition-all">
+                Got It! Let's Win The Party! 🎃
+            </button>
+        </div>
+    </div>
+
+    <div id="victoryModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-lg flex items-center justify-center p-4 hidden">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 neon-border-orange text-center relative animate-bounce-in">
+            <div class="text-7xl my-2 floating-candy">🏆</div>
+            <h2 class="text-3xl font-black text-amber-300 neon-sign-green">CLASSROOM PARTY VICTORY!</h2>
+            <p class="text-sm text-purple-100 my-3 leading-relaxed">
+                You gathered <strong id="finalCandyStat" class="text-amber-400">500</strong> candies and completed all party challenges! You are officially crowned the <strong class="text-lime-300">Master Halloween Host</strong>! 🎉
+            </p>
+
+            <div class="bg-purple-950/80 p-3 rounded-2xl border border-purple-700/50 my-4 text-xs grid grid-cols-2 gap-2 text-left">
+                <div>🍬 Total Candies: <strong id="statCandy" class="text-amber-300">500</strong></div>
+                <div>👻 Challenges Done: <strong id="statQuests" class="text-lime-300">3/3</strong></div>
+                <div>🔥 Best Streak: <strong id="statStreak" class="text-pink-300">3.0x</strong></div>
+                <div>👑 Title: <strong class="text-amber-400">Candy King!</strong></div>
+            </div>
+
+            <button id="playAgainBtn" class="w-full py-3 bg-gradient-to-r from-lime-400 to-emerald-500 text-slate-950 font-black rounded-2xl uppercase tracking-wider shadow-lg shadow-lime-500/30 hover:scale-105 transition-all active:scale-95">
+                Play Endless Party Mode! 🎃
+            </button>
+        </div>
+    </div>
+
+    <footer class="relative z-10 px-4 py-2 text-center text-[11px] text-purple-400/80 border-t border-purple-900/40 bg-purple-950/30">
+        Halloween Spooktacular Spins &bull; Created for Classroom Parties & Mini Halloween Carnivals
+    </footer>
+
+    <script>
+        // Game State Container
+        const gameState = {
+            totalCandy: 0,
+            streak: 1.0,
+            spinsCount: 0,
+            completedQuests: 0,
+            targetCandyGoal: 500,
+            targetQuestGoal: 3,
+            hasWon: false,
+            inventory: {
+                wrapped: 0,
+                corn: 0,
+                lollipop: 0,
+                choco: 0
+            },
+            currentAngle: 0,
+            isSpinning: false,
+            autoSpin: false,
+            theme: 'classic'
+        };
+
+        // Complete Theme Configurations
+        const themeConfigs = {
+            classic: {
+                rimColor: '#39ff14',
+                outerRing: '#b026ff',
+                hubBorder: '#ff6600',
+                shadowColor: '#39ff14',
+                hubIcon: '🎃',
+                segments: [
+                    { label: 'Wrapped Candy', icon: '🍬', amount: 15, bg: '#ff007f', text: '#ffffff', type: 'candy', candyType: 'wrapped' },
+                    { label: 'Candy Corn', icon: '🌽', amount: 20, bg: '#ff6600', text: '#ffffff', type: 'candy', candyType: 'corn' },
+                    { label: 'Monster Dance', icon: '🧟', amount: 30, bg: '#b026ff', text: '#ffffff', type: 'challenge', challenge: 'dance' },
+                    { label: 'Lolli Pop', icon: '🍭', amount: 25, bg: '#39ff14', text: '#0f051d', type: 'candy', candyType: 'lollipop' },
+                    { label: 'BONUS JACKPOT', icon: '⭐', amount: 100, bg: '#00f3ff', text: '#0f051d', type: 'jackpot' },
+                    { label: 'Choco Bar', icon: '🍫', amount: 35, bg: '#ff6600', text: '#ffffff', type: 'candy', candyType: 'choco' },
+                    { label: 'Spooky Riddle', icon: '💀', amount: 30, bg: '#b026ff', text: '#ffffff', type: 'challenge', challenge: 'riddle' },
+                    { label: 'Ghost Whisper', icon: '👻', amount: 25, bg: '#ff007f', text: '#ffffff', type: 'challenge', challenge: 'whisper' }
+                ]
+            },
+            neonGhost: {
+                rimColor: '#00f3ff',
+                outerRing: '#7b2cbf',
+                hubBorder: '#00f3ff',
+                shadowColor: '#00f3ff',
+                hubIcon: '👻',
+                segments: [
+                    { label: 'Ghost Candy', icon: '👻', amount: 15, bg: '#00f3ff', text: '#0f051d', type: 'candy', candyType: 'wrapped' },
+                    { label: 'Spectral Corn', icon: '✨', amount: 20, bg: '#7b2cbf', text: '#ffffff', type: 'candy', candyType: 'corn' },
+                    { label: 'Monster Dance', icon: '🕺', amount: 30, bg: '#3a0ca3', text: '#ffffff', type: 'challenge', challenge: 'dance' },
+                    { label: 'Spook Pop', icon: '🔮', amount: 25, bg: '#4cc9f0', text: '#0f051d', type: 'candy', candyType: 'lollipop' },
+                    { label: 'GHOST JACKPOT', icon: '🌌', amount: 100, bg: '#f72585', text: '#ffffff', type: 'jackpot' },
+                    { label: 'Phantom Choco', icon: '🍫', amount: 35, bg: '#7209b7', text: '#ffffff', type: 'candy', candyType: 'choco' },
+                    { label: 'Spooky Riddle', icon: '💀', amount: 30, bg: '#4361ee', text: '#ffffff', type: 'challenge', challenge: 'riddle' },
+                    { label: 'Ghost Whisper', icon: '🐺', amount: 25, bg: '#00f3ff', text: '#0f051d', type: 'challenge', challenge: 'whisper' }
+                ]
+            },
+            witchGlow: {
+                rimColor: '#39ff14',
+                outerRing: '#ff007f',
+                hubBorder: '#39ff14',
+                shadowColor: '#ff007f',
+                hubIcon: '🧪',
+                segments: [
+                    { label: 'Witch Brew', icon: '🧪', amount: 15, bg: '#39ff14', text: '#0f051d', type: 'candy', candyType: 'wrapped' },
+                    { label: 'Magic Candy', icon: '🍬', amount: 20, bg: '#ff007f', text: '#ffffff', type: 'candy', candyType: 'corn' },
+                    { label: 'Monster Dance', icon: '📜', amount: 30, bg: '#7000ff', text: '#ffffff', type: 'challenge', challenge: 'dance' },
+                    { label: 'Cauldron Pop', icon: '🍲', amount: 25, bg: '#ff9e00', text: '#0f051d', type: 'candy', candyType: 'lollipop' },
+                    { label: 'WITCH JACKPOT', icon: '🧹', amount: 100, bg: '#39ff14', text: '#0f051d', type: 'jackpot' },
+                    { label: 'Bat Bar', icon: '🦇', amount: 35, bg: '#ff007f', text: '#ffffff', type: 'candy', candyType: 'choco' },
+                    { label: 'Spooky Riddle', icon: '🔮', amount: 30, bg: '#7000ff', text: '#ffffff', type: 'challenge', challenge: 'riddle' },
+                    { label: 'Ghost Whisper', icon: '🌙', amount: 25, bg: '#ff9e00', text: '#0f051d', type: 'challenge', challenge: 'whisper' }
+                ]
+            }
+        };
+
+        function getActiveSegments() {
+            return themeConfigs[gameState.theme].segments;
+        }
+
+        // Party Challenges Dictionary
+        const partyChallenges = {
+            dance: {
+                title: "Monster Mash Dance!",
+                icon: "🧟",
+                description: "Do your best 5-second Monster Mash dance or spooky pose for the classroom to claim your bonus treat reward!"
+            },
+            riddle: {
+                title: "Spooky Halloween Riddle!",
+                icon: "💀",
+                description: "Riddle: What kind of roads do ghosts like best? (Answer: Dead ends!) Shout the answer out loud!"
+            },
+            whisper: {
+                title: "Friendly Ghost Whisper!",
+                icon: "👻",
+                description: "Whisper your favorite scary Halloween ghost story phrase to your neighbor to claim 50 Bonus Candies!"
+            }
+        };
+
+        const audioFX = {
+            ctx: null,
+            isMuted: false,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            },
+            playTick() {
+                if (this.isMuted) return;
+                this.init();
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(150, this.ctx.currentTime + 0.04);
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.04);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.04);
+                } catch(e) {}
+            },
+            playWinChime() {
+                if (this.isMuted) return;
+                this.init();
+                try {
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.value = freq;
+                        const startTime = this.ctx.currentTime + idx * 0.08;
+                        gain.gain.setValueAtTime(0, startTime);
+                        gain.gain.linearRampToValueAtTime(0.2, startTime + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(startTime);
+                        osc.stop(startTime + 0.3);
+                    });
+                } catch(e) {}
+            },
+            playPop() {
+                if (this.isMuted) return;
+                this.init();
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(900, this.ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.08);
+                } catch(e) {}
+            }
+        };
+
+        function updateStatusText(msg) {
+            document.getElementById('currentStatusText').textContent = msg;
+        }
+
+        function setHostExpression(emoji, speechText) {
+            document.getElementById('hostEmoji').textContent = emoji;
+            document.getElementById('speechBubble').textContent = speechText;
+        }
+
+        function addPartyFeed(msg) {
+            const feed = document.getElementById('partyFeed');
+            const item = document.createElement('div');
+            item.className = 'bg-purple-950/40 p-2 rounded-xl border border-purple-800/30 text-purple-200 animate-fade-in';
+            item.innerHTML = msg;
+            feed.prepend(item);
+        }
+
+        function showChallengeModal(data) {
+            document.getElementById('modalIcon').textContent = data.icon;
+            document.getElementById('modalTitle').textContent = data.title;
+            document.getElementById('modalDescription').textContent = data.description;
+            document.getElementById('challengeModal').classList.remove('hidden');
+        }
+
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function drawWheel() {
+            const activeTheme = themeConfigs[gameState.theme];
+            const activeSegs = activeTheme.segments;
+            const numSegments = activeSegs.length;
+            const segmentAngle = (2 * Math.PI) / numSegments;
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = canvas.width / 2 - 16;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Outer Neon Rim Glow with dynamic Theme Color
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius + 8, 0, 2 * Math.PI);
+            ctx.fillStyle = '#1a0b2e';
+            ctx.shadowColor = activeTheme.shadowColor;
+            ctx.shadowBlur = 25;
+            ctx.fill();
+            ctx.restore();
+
+            // Render Wheel Segments
+            for (let i = 0; i < numSegments; i++) {
+                const startAngle = gameState.currentAngle + i * segmentAngle;
+                const endAngle = startAngle + segmentAngle;
+                const seg = activeSegs[i];
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
+
+                const grad = ctx.createRadialGradient(centerX, centerY, 20, centerX, centerY, radius);
+                grad.addColorStop(0, seg.bg);
+                grad.addColorStop(1, adjustColorBrightness(seg.bg, -30));
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                ctx.strokeStyle = activeTheme.rimColor;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(startAngle + segmentAngle / 2);
+                ctx.textAlign = 'right';
+                ctx.fillStyle = seg.text;
+                ctx.font = 'bold 15px Fredoka, sans-serif';
+
+                ctx.fillText(seg.label, radius - 45, 5);
+                ctx.font = '26px sans-serif';
+                ctx.fillText(seg.icon, radius - 15, 8);
+
+                ctx.restore();
+            }
+
+            // Outer Frame Ring
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.lineWidth = 8;
+            ctx.strokeStyle = activeTheme.outerRing;
+            ctx.stroke();
+
+            // Center Hub Ring
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 50, 0, 2 * Math.PI);
+            ctx.fillStyle = '#0f051d';
+            ctx.fill();
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = activeTheme.hubBorder;
+            ctx.stroke();
+        }
+
+        function adjustColorBrightness(hex, percent) {
+            let num = parseInt(hex.replace('#',''), 16),
+            amt = Math.round(2.55 * percent),
+            R = (num >> 16) + amt,
+            B = (num >> 8 & 0x00FF) + amt,
+            G = (num & 0x0000FF) + amt;
+            return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (B<255?B<1?0:B:255)*0x100 + (G<255?G<1?0:G:255)).toString(16).slice(1);
+        }
+
+        let spinVelocity = 0;
+        let lastSegmentIndex = -1;
+
+        function spinWheel() {
+            if (gameState.isSpinning) return;
+            
+            gameState.isSpinning = true;
+            audioFX.init();
+            
+            spinVelocity = Math.random() * 0.25 + 0.35;
+            const friction = 0.988;
+            const activeSegs = getActiveSegments();
+            const segmentAngle = (2 * Math.PI) / activeSegs.length;
+            
+            updateStatusText('Spooktacular Wheel Spinning!');
+            setHostExpression('😮', '"Hold onto your witch hats! Where will it land?"');
+
+            function animateSpin() {
+                if (spinVelocity > 0.001) {
+                    gameState.currentAngle += spinVelocity;
+                    gameState.currentAngle %= (2 * Math.PI);
+                    spinVelocity *= friction;
+
+                    const normalizedAngle = (2 * Math.PI - (gameState.currentAngle % (2 * Math.PI))) % (2 * Math.PI);
+                    const currentSegIndex = Math.floor(normalizedAngle / segmentAngle) % activeSegs.length;
+
+                    if (currentSegIndex !== lastSegmentIndex) {
+                        lastSegmentIndex = currentSegIndex;
+                        audioFX.playTick();
+                    }
+
+                    drawWheel();
+                    requestAnimationFrame(animateSpin);
+                } else {
+                    gameState.isSpinning = false;
+                    const finalNormalized = (2 * Math.PI - (gameState.currentAngle % (2 * Math.PI))) % (2 * Math.PI);
+                    const winningIndex = Math.floor(finalNormalized / segmentAngle) % activeSegs.length;
+                    
+                    handleWinningSegment(activeSegs[winningIndex]);
+                }
+            }
+
+            animateSpin();
+        }
+
+        function handleWinningSegment(segment) {
+            audioFX.playWinChime();
+            gameState.spinsCount++;
+
+            const rewardTotal = Math.round(segment.amount * gameState.streak);
+            gameState.totalCandy += rewardTotal;
+
+            if (segment.type === 'candy') {
+                gameState.inventory[segment.candyType] += Math.round(1 * gameState.streak);
+            } else {
+                gameState.inventory.wrapped += 1;
+            }
+
+            if (gameState.spinsCount % 3 === 0) {
+                gameState.streak = Math.min(gameState.streak + 0.5, 3.0);
+            }
+
+            updateUI();
+
+            if (segment.type === 'jackpot') {
+                setHostExpression('🤩', '"JACKPOT! Move your Candy Bucket left & right to catch falling treats!"');
+                addPartyFeed(`⭐ <b>JACKPOT LANDING!</b> Won ${rewardTotal} Candies! Move your bucket to catch candy!`);
+                startCandyRainBlitz();
+            } else if (segment.type === 'challenge') {
+                const challengeData = partyChallenges[segment.challenge] || { title: "Party Challenge!", icon: "🎉", description: "Complete a fun party step!" };
+                setHostExpression('🎉', `"${challengeData.title} Time to celebrate!"`);
+                showChallengeModal(challengeData);
+                addPartyFeed(`👻 <b>Party Challenge:</b> Landed on ${segment.label}!`);
+            } else {
+                setHostExpression('😄', `"Awesome! You won ${rewardTotal} ${segment.label}s!"`);
+                addPartyFeed(`🍬 Won <b>${rewardTotal} Candies</b> from ${segment.label}!`);
+                updateStatusText(`Landed on ${segment.label}! +${rewardTotal} Candies!`);
+            }
+
+            if (gameState.autoSpin && segment.type !== 'jackpot' && segment.type !== 'challenge') {
+                setTimeout(spinWheel, 2000);
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('totalCandyCount').textContent = gameState.totalCandy;
+            document.getElementById('streakDisplay').textContent = `${gameState.streak.toFixed(1)}x Multiplier`;
+            
+            document.getElementById('wrappedCount').textContent = gameState.inventory.wrapped;
+            document.getElementById('candyCornCount').textContent = gameState.inventory.corn;
+            document.getElementById('lollipopCount').textContent = gameState.inventory.lollipop;
+            document.getElementById('chocoCount').textContent = gameState.inventory.choco;
+
+            const totalItems = Object.values(gameState.inventory).reduce((a, b) => a + b, 0);
+            const fillPct = Math.min(Math.round((totalItems / 50) * 100), 100);
+            document.getElementById('bucketFillPercent').textContent = `${fillPct}% Full`;
+
+            const candyProgress = Math.min(Math.round((gameState.totalCandy / gameState.targetCandyGoal) * 100), 100);
+            document.getElementById('partyProgressBar').style.width = `${candyProgress}%`;
+            document.getElementById('partyProgressText').textContent = `${gameState.totalCandy} / ${gameState.targetCandyGoal} Candies`;
+            document.getElementById('questCountDisplay').textContent = `${gameState.completedQuests} / ${gameState.targetQuestGoal}`;
+
+            if (!gameState.hasWon && gameState.totalCandy >= gameState.targetCandyGoal && gameState.completedQuests >= gameState.targetQuestGoal) {
+                gameState.hasWon = true;
+                setTimeout(showVictoryModal, 600);
+            }
+        }
+
+        function showVictoryModal() {
+            audioFX.playWinChime();
+            document.getElementById('finalCandyStat').textContent = gameState.totalCandy;
+            document.getElementById('statCandy').textContent = gameState.totalCandy;
+            document.getElementById('statQuests').textContent = `${gameState.completedQuests}/${gameState.targetQuestGoal}`;
+            document.getElementById('statStreak').textContent = `${gameState.streak.toFixed(1)}x`;
+            document.getElementById('victoryModal').classList.remove('hidden');
+            startCandyRainBlitz();
+        }
+
+        const rainCanvas = document.getElementById('candyRainCanvas');
+        const rCtx = rainCanvas.getContext('2d');
+        let rainParticles = [];
+        let floatingPopups = [];
+        let rainAnimationId = null;
+        
+        // Movable Bucket State
+        const bucket = {
+            x: window.innerWidth / 2,
+            y: window.innerHeight - 80,
+            width: 120,
+            height: 70
+        };
+
+        function resizeRainCanvas() {
+            rainCanvas.width = window.innerWidth;
+            rainCanvas.height = window.innerHeight;
+            bucket.y = rainCanvas.height - 80;
+        }
+        window.addEventListener('resize', resizeRainCanvas);
+        resizeRainCanvas();
+
+        // Bucket Controls (Mouse / Touch / Pointer / Arrow Keys)
+        function updateBucketPosition(clientX) {
+            bucket.x = Math.max(bucket.width / 2, Math.min(rainCanvas.width - bucket.width / 2, clientX));
+        }
+
+        window.addEventListener('pointermove', (e) => {
+            if (rainAnimationId) updateBucketPosition(e.clientX);
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (rainAnimationId && e.touches.length > 0) {
+                updateBucketPosition(e.touches[0].clientX);
+            }
+        }, { passive: true });
+
+        window.addEventListener('keydown', (e) => {
+            if (!rainAnimationId) return;
+            if (e.key === 'ArrowLeft') updateBucketPosition(bucket.x - 30);
+            if (e.key === 'ArrowRight') updateBucketPosition(bucket.x + 30);
+        });
+
+        function drawBucket() {
+            const x = bucket.x - bucket.width / 2;
+            const y = bucket.y;
+            const w = bucket.width;
+            const h = bucket.height;
+
+            // Bucket Handle
+            rCtx.beginPath();
+            rCtx.arc(bucket.x, y + 10, w / 2 - 10, Math.PI, 0);
+            rCtx.strokeStyle = '#ff6600';
+            rCtx.lineWidth = 6;
+            rCtx.stroke();
+
+            // Bucket Body (Pumpkin Basket)
+            rCtx.save();
+            rCtx.beginPath();
+            rCtx.moveTo(x, y + 15);
+            rCtx.quadraticCurveTo(x - 10, y + h, x + w / 2, y + h);
+            rCtx.quadraticCurveTo(x + w + 10, y + h, x + w, y + 15);
+            rCtx.closePath();
+
+            const bucketGrad = rCtx.createLinearGradient(x, y, x, y + h);
+            bucketGrad.addColorStop(0, '#ff6600');
+            bucketGrad.addColorStop(1, '#cc4400');
+            rCtx.fillStyle = bucketGrad;
+            rCtx.shadowColor = '#39ff14';
+            rCtx.shadowBlur = 15;
+            rCtx.fill();
+
+            rCtx.strokeStyle = '#39ff14';
+            rCtx.lineWidth = 3;
+            rCtx.stroke();
+            rCtx.restore();
+
+            // Bucket Face
+            rCtx.fillStyle = '#0f051d';
+            // Eyes
+            rCtx.beginPath();
+            rCtx.moveTo(x + 30, y + 30); rCtx.lineTo(x + 42, y + 30); rCtx.lineTo(x + 36, y + 42); rCtx.fill();
+            rCtx.beginPath();
+            rCtx.moveTo(x + w - 30, y + 30); rCtx.lineTo(x + w - 42, y + 30); rCtx.lineTo(x + w - 36, y + 42); rCtx.fill();
+            // Mouth
+            rCtx.beginPath();
+            rCtx.arc(bucket.x, y + 46, 18, 0, Math.PI, false);
+            rCtx.fill();
+
+            // Top Candy Fill Rim
+            rCtx.fillStyle = '#b026ff';
+            rCtx.font = 'bold 12px Fredoka, sans-serif';
+            rCtx.textAlign = 'center';
+            rCtx.fillText('MOVE TO CATCH!', bucket.x, y - 10);
+        }
+
+        function startCandyRainBlitz() {
+            rainParticles = [];
+            floatingPopups = [];
+            bucket.x = rainCanvas.width / 2;
+            const candyEmojis = ['🍬', '🍭', '🌽', '🍫', '⭐', '🎃', '🫘'];
+            
+            for (let i = 0; i < 35; i++) {
+                rainParticles.push({
+                    x: Math.random() * rainCanvas.width,
+                    y: Math.random() * -rainCanvas.height * 1.5,
+                    speedY: Math.random() * 4 + 3,
+                    speedX: Math.random() * 2 - 1,
+                    emoji: candyEmojis[Math.floor(Math.random() * candyEmojis.length)],
+                    size: Math.random() * 12 + 26
+                });
+            }
+
+            updateStatusText(`🎃 CANDY RAIN BLITZ! Move your Pumpkin Bucket left & right to catch treats!`);
+
+            let caughtCount = 0;
+
+            function animateRain() {
+                rCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+
+                // Render Bucket
+                drawBucket();
+
+                // Process falling candies
+                for (let i = rainParticles.length - 1; i >= 0; i--) {
+                    const p = rainParticles[i];
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+
+                    // Collision check with bucket
+                    const bucketLeft = bucket.x - bucket.width / 2 - 15;
+                    const bucketRight = bucket.x + bucket.width / 2 + 15;
+                    const bucketTop = bucket.y;
+
+                    if (p.y >= bucketTop - 10 && p.y <= bucketTop + bucket.height && p.x >= bucketLeft && p.x <= bucketRight) {
+                        audioFX.playPop();
+                        gameState.totalCandy += 10;
+                        caughtCount++;
+                        updateUI();
+
+                        // Add floating text
+                        floatingPopups.push({
+                            x: p.x,
+                            y: bucketTop - 10,
+                            text: '+10 🍬',
+                            alpha: 1.0,
+                            speedY: 2
+                        });
+
+                        // Respawn candy at top
+                        p.y = Math.random() * -200 - 50;
+                        p.x = Math.random() * rainCanvas.width;
+                    } else if (p.y > rainCanvas.height + 30) {
+                        // Respawn candy if missed
+                        p.y = Math.random() * -200 - 50;
+                        p.x = Math.random() * rainCanvas.width;
+                    }
+
+                    rCtx.font = `${p.size}px sans-serif`;
+                    rCtx.textAlign = 'center';
+                    rCtx.fillText(p.emoji, p.x, p.y);
+                }
+
+                // Render Floating Score Popups
+                for (let i = floatingPopups.length - 1; i >= 0; i--) {
+                    const pop = floatingPopups[i];
+                    pop.y -= pop.speedY;
+                    pop.alpha -= 0.03;
+
+                    if (pop.alpha <= 0) {
+                        floatingPopups.splice(i, 1);
+                        continue;
+                    }
+
+                    rCtx.save();
+                    rCtx.globalAlpha = pop.alpha;
+                    rCtx.fillStyle = '#39ff14';
+                    rCtx.font = 'bold 20px Fredoka, sans-serif';
+                    rCtx.fillText(pop.text, pop.x, pop.y);
+                    rCtx.restore();
+                }
+
+                rainAnimationId = requestAnimationFrame(animateRain);
+            }
+
+            animateRain();
+
+            setTimeout(() => {
+                cancelAnimationFrame(rainAnimationId);
+                rainAnimationId = null;
+                rCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+                updateStatusText(`Blitz Complete! Caught ${caughtCount} treats!`);
+                addPartyFeed(`🎉 <b>Candy Blitz Finished:</b> Caught ${caughtCount} treats into your bucket!`);
+            }, 10000);
+        }
+
+        document.getElementById('spinBtn').addEventListener('click', spinWheel);
+        canvas.addEventListener('click', spinWheel);
+
+        document.getElementById('triggerBlitzBtn').addEventListener('click', () => {
+            audioFX.playWinChime();
+            startCandyRainBlitz();
+        });
+
+        document.getElementById('autoSpinBtn').addEventListener('click', () => {
+            gameState.autoSpin = !gameState.autoSpin;
+            document.getElementById('autoSpinState').textContent = gameState.autoSpin ? 'ON' : 'OFF';
+            document.getElementById('autoSpinBtn').classList.toggle('border-lime-400', gameState.autoSpin);
+            if (gameState.autoSpin && !gameState.isSpinning) spinWheel();
+        });
+
+        document.getElementById('soundToggleBtn').addEventListener('click', () => {
+            audioFX.isMuted = !audioFX.isMuted;
+            const icon = document.getElementById('soundToggleBtn').querySelector('i');
+            icon.className = audioFX.isMuted ? 'fa-solid fa-volume-xmark text-lg text-rose-400' : 'fa-solid fa-volume-high text-lg text-purple-200';
+        });
+
+        document.getElementById('claimRewardBtn').addEventListener('click', () => {
+            document.getElementById('challengeModal').classList.add('hidden');
+            audioFX.playPop();
+            gameState.completedQuests++;
+            gameState.totalCandy += 50;
+            updateUI();
+            updateStatusText('Challenge Completed! +50 Candies!');
+        });
+
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            document.getElementById('challengeModal').classList.add('hidden');
+        });
+
+        document.getElementById('infoBtn').addEventListener('click', () => {
+            document.getElementById('infoModal').classList.remove('hidden');
+        });
+        document.getElementById('closeInfoBtn').addEventListener('click', () => {
+            document.getElementById('infoModal').classList.add('hidden');
+        });
+        document.getElementById('gotItBtn').addEventListener('click', () => {
+            document.getElementById('infoModal').classList.add('hidden');
+        });
+
+        document.getElementById('playAgainBtn').addEventListener('click', () => {
+            document.getElementById('victoryModal').classList.add('hidden');
+            updateStatusText('Endless Halloween Party Mode Active!');
+        });
+
+        // Theme Switcher Handler
+        document.querySelectorAll('.theme-select-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.theme-select-btn').forEach(b => {
+                    b.classList.remove('active', 'border-2', 'border-lime-400', 'bg-lime-950/70', 'text-lime-300', 'shadow-md', 'shadow-lime-500/20');
+                    b.classList.add('border', 'border-purple-800', 'bg-purple-950/40', 'text-purple-300');
+                });
+
+                const target = e.currentTarget;
+                target.classList.remove('border', 'border-purple-800', 'bg-purple-950/40', 'text-purple-300');
+                target.classList.add('active', 'border-2', 'border-lime-400', 'bg-lime-950/70', 'text-lime-300', 'shadow-md', 'shadow-lime-500/20');
+
+                gameState.theme = target.dataset.theme;
+                audioFX.playPop();
+                
+                // Update host emoji based on theme
+                const themeIcon = themeConfigs[gameState.theme].hubIcon;
+                setHostExpression(themeIcon, `"Switched to the ${target.innerText.trim()} theme!"`);
+                
+                drawWheel();
+            });
+        });
+
+        // Initial Initialization
+        window.onload = () => {
+            drawWheel();
+            updateUI();
+        };
+    </script>
+</body>
+</html>
