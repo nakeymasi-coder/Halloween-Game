@@ -1,0 +1,7 @@
+{
+  "name": "Halloween Spooktacular Spins",
+  "description": "Neon classroom candy game with interactive spinning wheel and Halloween mini-games",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
